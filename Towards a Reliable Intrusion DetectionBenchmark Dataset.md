@@ -341,4 +341,4 @@ Bước cuối cùng là tính toán ra "Bản thiết kế" đại diện (Tâm
 
 **Bước 8.4: Chu trình Lặp đến khi Ổn định**
 - Hệ thống lặp lại bước cộng dồn trọng tâm này khoảng 15 đến 30 vòng cho đến khi mảng `C_tmp` không đổi nữa.
-- **KẾT QUẢ TỐI HẬU:** Mảng `C_tmp` cuối cùng này chính là **B-Profile**.
+- **KẾT QUẢ CUỐI CÙNG:** Mảng `C_tmp` cuối cùng này chính là **B-Profile**.
