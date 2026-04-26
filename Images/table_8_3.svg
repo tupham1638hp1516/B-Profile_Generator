@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="250">
+<style>text { font-family: Arial, sans-serif; font-size: 14px; text-anchor: middle; dominant-baseline: central; }</style>
+<rect width="100%" height="100%" fill="white"/>
+<text x="420.0" y="25" font-size="16px" font-weight="bold">So sanh DBA va Trung binh cong</text>
+<rect x="0" y="50" width="140" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="70.0" y="70.0" font-weight="bold">Phuong phap</text>
+<rect x="140" y="50" width="140" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="210.0" y="70.0" font-weight="bold">Cot 1</text>
+<rect x="280" y="50" width="140" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="350.0" y="70.0" font-weight="bold">Cot 2 (08:30)</text>
+<rect x="420" y="50" width="140" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="490.0" y="70.0" font-weight="bold">Cot 3 (09:00)</text>
+<rect x="560" y="50" width="140" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="630.0" y="70.0" font-weight="bold">Cot 4</text>
+<rect x="700" y="50" width="140" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="770.0" y="70.0" font-weight="bold">Cot 5</text>
+<rect x="0" y="90" width="140" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="70.0" y="110.0" >Ngay 1</text>
+<rect x="140" y="90" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="210.0" y="110.0" >10</text>
+<rect x="280" y="90" width="140" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="350.0" y="110.0" font-weight="bold">50</text>
+<rect x="420" y="90" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="490.0" y="110.0" >20</text>
+<rect x="560" y="90" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="630.0" y="110.0" >0</text>
+<rect x="700" y="90" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="770.0" y="110.0" >5</text>
+<rect x="0" y="130" width="140" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="70.0" y="150.0" >Ngay 2</text>
+<rect x="140" y="130" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="210.0" y="150.0" >0</text>
+<rect x="280" y="130" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="350.0" y="150.0" >15</text>
+<rect x="420" y="130" width="140" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="490.0" y="150.0" font-weight="bold">45</text>
+<rect x="560" y="130" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="630.0" y="150.0" >20</text>
+<rect x="700" y="130" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="770.0" y="150.0" >0</text>
+<rect x="0" y="170" width="140" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="70.0" y="190.0" >TBC (Sai)</text>
+<rect x="140" y="170" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="210.0" y="190.0" >5</text>
+<rect x="280" y="170" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="350.0" y="190.0" >32.5</text>
+<rect x="420" y="170" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="490.0" y="190.0" >32.5</text>
+<rect x="560" y="170" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="630.0" y="190.0" >10</text>
+<rect x="700" y="170" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="770.0" y="190.0" >2.5</text>
+<rect x="0" y="210" width="140" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="70.0" y="230.0" >DBA (Dung)</text>
+<rect x="140" y="210" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="210.0" y="230.0" >5</text>
+<rect x="280" y="210" width="140" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="350.0" y="230.0" font-weight="bold">47.5</text>
+<rect x="420" y="210" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="490.0" y="230.0" >20</text>
+<rect x="560" y="210" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="630.0" y="230.0" >10</text>
+<rect x="700" y="210" width="140" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="770.0" y="230.0" >2.5</text>
+</svg>

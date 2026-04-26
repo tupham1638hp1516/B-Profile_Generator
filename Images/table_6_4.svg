@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="250">
+<style>text { font-family: Arial, sans-serif; font-size: 14px; text-anchor: middle; dominant-baseline: central; }</style>
+<rect width="100%" height="100%" fill="white"/>
+<text x="400.0" y="25" font-size="16px" font-weight="bold">Sieu Ma tran Khoang cach DTW</text>
+<rect x="0" y="50" width="160" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="80.0" y="70.0" font-weight="bold">Doi chieu</text>
+<rect x="160" y="50" width="160" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="240.0" y="70.0" font-weight="bold">Ngay 1</text>
+<rect x="320" y="50" width="160" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="400.0" y="70.0" font-weight="bold">Ngay 2</text>
+<rect x="480" y="50" width="160" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="560.0" y="70.0" font-weight="bold">Ngay 3</text>
+<rect x="640" y="50" width="160" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="720.0" y="70.0" font-weight="bold">Ngay 4 (Cuoi tuan)</text>
+<rect x="0" y="90" width="160" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="80.0" y="110.0" >Ngay 1</text>
+<rect x="160" y="90" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="240.0" y="110.0" >0</text>
+<rect x="320" y="90" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="400.0" y="110.0" >15.2</text>
+<rect x="480" y="90" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="560.0" y="110.0" >18.5</text>
+<rect x="640" y="90" width="160" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="720.0" y="110.0" font-weight="bold">140.8</text>
+<rect x="0" y="130" width="160" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="80.0" y="150.0" >Ngay 2</text>
+<rect x="160" y="130" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="240.0" y="150.0" >15.2</text>
+<rect x="320" y="130" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="400.0" y="150.0" >0</text>
+<rect x="480" y="130" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="560.0" y="150.0" >12.1</text>
+<rect x="640" y="130" width="160" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="720.0" y="150.0" font-weight="bold">155.3</text>
+<rect x="0" y="170" width="160" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="80.0" y="190.0" >Ngay 3</text>
+<rect x="160" y="170" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="240.0" y="190.0" >18.5</text>
+<rect x="320" y="170" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="400.0" y="190.0" >12.1</text>
+<rect x="480" y="170" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="560.0" y="190.0" >0</text>
+<rect x="640" y="170" width="160" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="720.0" y="190.0" font-weight="bold">132.0</text>
+<rect x="0" y="210" width="160" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="80.0" y="230.0" >Ngay 4 (Cuoi tuan)</text>
+<rect x="160" y="210" width="160" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="240.0" y="230.0" font-weight="bold">140.8</text>
+<rect x="320" y="210" width="160" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="400.0" y="230.0" font-weight="bold">155.3</text>
+<rect x="480" y="210" width="160" height="40" fill="#e6f2ff" stroke="#ccc"/>
+<text x="560.0" y="230.0" font-weight="bold">132.0</text>
+<rect x="640" y="210" width="160" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="720.0" y="230.0" >0</text>
+</svg>

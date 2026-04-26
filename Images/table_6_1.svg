@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="290">
+<style>text { font-family: Arial, sans-serif; font-size: 14px; text-anchor: middle; dominant-baseline: central; }</style>
+<rect width="100%" height="100%" fill="white"/>
+<text x="360.0" y="25" font-size="16px" font-weight="bold">Ma tran Chi phi (Cost Matrix)</text>
+<rect x="0" y="50" width="120" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="60.0" y="70.0" font-weight="bold">S1 \ S2</text>
+<rect x="120" y="50" width="120" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="180.0" y="70.0" font-weight="bold">Cot 1 (0)</text>
+<rect x="240" y="50" width="120" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="300.0" y="70.0" font-weight="bold">Cot 2 (15)</text>
+<rect x="360" y="50" width="120" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="420.0" y="70.0" font-weight="bold">Cot 3 (45)</text>
+<rect x="480" y="50" width="120" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="540.0" y="70.0" font-weight="bold">Cot 4 (20)</text>
+<rect x="600" y="50" width="120" height="40" fill="#f0f0f0" stroke="#ccc"/>
+<text x="660.0" y="70.0" font-weight="bold">Cot 5 (0)</text>
+<rect x="0" y="90" width="120" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="60.0" y="110.0" >Cot 1 (10)</text>
+<rect x="120" y="90" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="180.0" y="110.0" >|10-0|=10</text>
+<rect x="240" y="90" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="300.0" y="110.0" >|10-15|=5</text>
+<rect x="360" y="90" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="420.0" y="110.0" >|10-45|=35</text>
+<rect x="480" y="90" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="540.0" y="110.0" >|10-20|=10</text>
+<rect x="600" y="90" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="660.0" y="110.0" >|10-0|=10</text>
+<rect x="0" y="130" width="120" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="60.0" y="150.0" >Cot 2 (50)</text>
+<rect x="120" y="130" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="180.0" y="150.0" >|50-0|=50</text>
+<rect x="240" y="130" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="300.0" y="150.0" >|50-15|=35</text>
+<rect x="360" y="130" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="420.0" y="150.0" >|50-45|=5</text>
+<rect x="480" y="130" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="540.0" y="150.0" >|50-20|=30</text>
+<rect x="600" y="130" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="660.0" y="150.0" >|50-0|=50</text>
+<rect x="0" y="170" width="120" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="60.0" y="190.0" >Cot 3 (20)</text>
+<rect x="120" y="170" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="180.0" y="190.0" >|20-0|=20</text>
+<rect x="240" y="170" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="300.0" y="190.0" >|20-15|=5</text>
+<rect x="360" y="170" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="420.0" y="190.0" >|20-45|=25</text>
+<rect x="480" y="170" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="540.0" y="190.0" >|20-20|=0</text>
+<rect x="600" y="170" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="660.0" y="190.0" >|20-0|=20</text>
+<rect x="0" y="210" width="120" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="60.0" y="230.0" >Cot 4 (0)</text>
+<rect x="120" y="210" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="180.0" y="230.0" >|0-0|=0</text>
+<rect x="240" y="210" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="300.0" y="230.0" >|0-15|=15</text>
+<rect x="360" y="210" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="420.0" y="230.0" >|0-45|=45</text>
+<rect x="480" y="210" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="540.0" y="230.0" >|0-20|=20</text>
+<rect x="600" y="210" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="660.0" y="230.0" >|0-0|=0</text>
+<rect x="0" y="250" width="120" height="40" fill="#f9f9f9" stroke="#ccc"/>
+<text x="60.0" y="270.0" >Cot 5 (5)</text>
+<rect x="120" y="250" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="180.0" y="270.0" >|5-0|=5</text>
+<rect x="240" y="250" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="300.0" y="270.0" >|5-15|=10</text>
+<rect x="360" y="250" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="420.0" y="270.0" >|5-45|=40</text>
+<rect x="480" y="250" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="540.0" y="270.0" >|5-20|=15</text>
+<rect x="600" y="250" width="120" height="40" fill="#ffffff" stroke="#ccc"/>
+<text x="660.0" y="270.0" >|5-0|=5</text>
+</svg>
