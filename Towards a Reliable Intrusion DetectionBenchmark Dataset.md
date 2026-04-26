@@ -108,4 +108,84 @@ Bảng gốc (Chưa được sắp xếp):
 
 - Bước 3.3.4: Sau khi công thức toán học trả về kết quả (từ 0 đến 47), hệ thống sẽ gán con số này thành một thẻ chỉ số (Index tag) mới cho hàng dữ liệu đó.
 
-### Bước 4: 
+### Bước 4: Ép nén dữ liệu và Hoàn thiện Biểu đồ Tần suất 48-cột (Data Aggregation & Histogram Generation)
+
+> Ý tưởng: Mục tiêu của bước này là chấm dứt tình trạng lưu trữ dữ liệu dưới dạng "chuỗi log khổng lồ" rời rạc. Các hành vi mạng chi chít trong một khoảng thời gian 30 phút sẽ được tổng hợp, ép nén và phân bổ vào các cột tương ứng. Đầu ra của quá trình này sẽ chuyển đổi dữ liệu mạng hỗn loạn thành một định dạng "chuỗi thời gian chuẩn hóa" (standardized time-dependent sequence) gồm đúng 48 giá trị cho mỗi ngày.
+
+**Bước 4.1**: Hệ thống phân chia tập dữ liệu con thành các nhóm nhỏ hơn theo lịch. Ví dụ: Từ Anh A - Web thành [Anh A - Web - Ngày 1], [Anh A - Web - Ngày 2], v.v. Biểu đồ 48-cột sẽ được tính toán riêng cho mỗi 24 giờ này.
+
+**Bước 4.2**: Đối với mỗi bộ dữ liệu của [Một người dùng - Một giao thức - Một ngày], hệ thống khởi tạo các mảng dữ liệu (arrays) trống gồm 48 phần tử (từ bin_0 đến bin_47), với tất cả các giá trị ban đầu được gán bằng 0.
+
+> Tùy thuộc vào đặc trưng muốn theo dõi, hệ thống sẽ tạo ra các mảng tương ứng. Ví dụ:
+
+- array_requests_count = [0, 0, ..., 0] (Theo dõi tần suất tương tác)
+- array_total_bytes = [0, 0, ..., 0] (Theo dõi dung lượng truyền tải FTP/Web)
+
+**Bước 4.3**: Hệ thống sử dụng các hàm tổng hợp toán học để quét qua toàn bộ dữ liệu và ép nén chúng vào 48 cột dựa trên thẻ Index đã đánh ở Bước 3. Các quy tắc ép nén phụ thuộc vào bản chất của đặc trưng:
+
+**Ép nén dạng Đếm (Count/Frequency):** Áp dụng cho "số lượng kết nối HTTP" hoặc số lệnh thực thi.
+
+- Logic: Đếm tổng số lượng dòng (luồng mạng) có cùng Index.
+
+- Ví dụ: Có 50 luồng HTTP của Anh A mang thẻ Index = 16 (08:00 - 08:30). Mảng đếm sẽ cập nhật: array_requests_count[16] = 50.
+
+**Ép nén dạng Cộng dồn (Sum):** Áp dụng cho dung lượng mạng (tot_l_fw_pkt, tot_fw_pk).
+
+- Logic: Tính tổng tất cả giá trị dung lượng của các luồng có cùng Index.
+
+- Ví dụ: Anh A có 3 luồng FTP tải file vào Index = 17, dung lượng lần lượt là 10MB, 20MB, 5MB. Mảng dung lượng sẽ cập nhật: array_total_bytes[17] = 35MB.
+
+**Ép nén dạng Tính trung bình (Mean):** Áp dụng cho các đặc trưng như thời lượng luồng (fl_dur).
+
+- Logic: Lấy trung bình cộng thời gian sống của tất cả các kết nối trong khoảng 30 phút đó.
+
+> Sau khi chạy qua toàn bộ dữ liệu, tập log khổng lồ của một ngày đã bị triệt tiêu hoàn toàn. Những gì còn lại là một vector chuỗi thời gian siêu gọn nhẹ và đồng nhất về kích thước (chính xác 48 phần tử).
+
+### Nếu ta nhìn theo góc độ luồng dữ liệu (data pipeline) việc gộp chung bước 3 và bước 4 sẽ dễ và trơn tru hơn.
+
+> Thay vì chạy qua dữ liệu nhiều vòng, hệ thống chỉ cần làm một thao tác duy nhất: Gom nhóm theo Ngày -> Đánh Index -> Ép nén.
+
+**Bước 1:** Gom nhóm đa chiều (Multi-level Grouping)
+
+Hệ thống sử dụng các thư viện xử lý dữ liệu (như Pandas) để phân mảnh toàn bộ cơ sở dữ liệu khổng lồ. Tiêu chí gom nhóm (groupby) giờ đây sử dụng một khóa tổng hợp gồm 3 yếu tố:
+
+- IP Nguồn (Ai đang thực hiện hành vi?)
+
+- Giao thức (Hành vi đó là gì? Web, FTP, hay SSH?)
+
+- Ngày thực thi (Hành vi đó diễn ra vào ngày nào?)
+
+> Kết quả: Dữ liệu thô được chia thành hàng nghìn khối dữ liệu con độc lập. Ví dụ: [Anh A - Web - Ngày 03/04/2026], [Anh A - Web - Ngày 04/04/2026].
+
+**Bước 2:** Ánh xạ Phân vùng Thời gian (Time Binning)
+
+Bên trong mỗi khối dữ liệu con của một ngày (ví dụ: [Anh A - Web - Ngày 03/04/2026]), hệ thống bắt đầu xử lý cột thời gian (Timestamp).
+
+- Khung thời gian 24 giờ của ngày hôm đó được chia thành 48 khoảng (bins), mỗi khoảng rộng 30 phút.
+
+- Hệ thống đọc Giờ và Phút của từng luồng mạng, đưa vào công thức: Index = Phần nguyên của [(Giờ * 60 + Phút) / 30]
+
+- Một thẻ chỉ số (Index từ 0 đến 47) được gán tạm thời cho mỗi luồng.
+
+**Bước 3:** Ép nén Dữ liệu (Data Aggregation)
+
+Ngay sau khi có thẻ Index, hệ thống tiến hành ép nén hàng loạt các luồng mạng rời rạc có chung Index lại với nhau. Quá trình này sẽ triệt tiêu dữ liệu log thô và thay thế bằng các giá trị tổng hợp toán học, tùy thuộc vào đặc trưng đang xét:
+
+- Tần suất (Count): Đếm tổng số luồng kết nối (vd: số lượng request HTTP trong khung giờ đó).
+
+- Dung lượng (Sum): Cộng dồn kích thước gói tin (tot_l_fw_pkt) để biết tổng băng thông đã tiêu thụ.
+
+- Thời gian (Mean): Lấy trung bình cộng thời lượng tồn tại của các luồng (fl_dur).
+
+Kết quả đầu ra:
+
+Đến cuối quy trình, tập log khổng lồ biến mất. Lịch sử hoạt động của [Anh A - Web - Ngày 03/04/2026] giờ đây chỉ còn lại một (hoặc nhiều) mảng dữ liệu (arrays) cực kỳ gọn nhẹ, chứa chính xác 48 phần tử: [bin_0, bin_1, ..., bin_47].
+
+### Bước 5: Điền khuyết dữ liệu (Zero-filling) và Chốt cấu trúc Ma trận
+
+- Vấn đề: Log mạng mang tính chất sự kiện (event-based). Vào những khoảng thời gian người dùng không hoạt động (như khi đang ngủ lúc 3h sáng), hệ thống thu thập sẽ không ghi nhận luồng dữ liệu nào, dẫn đến việc thiếu hụt thẻ Index tương ứng trong mảng ép nén.
+
+- Hệ thống sử dụng một đoạn mã (code) để quét lại tất cả các tập dữ liệu. Hệ thống buộc dữ liệu phải khớp với một trục thời gian chuẩn gồm đủ 48 Index (từ 0 đến 47). Tại bất kỳ khung giờ nào không có hoạt động, code sẽ tự động điền các số 0 vào toàn bộ thông số của rổ đó.
+
+### Đến đây là kết thúc phân đoạn Time-Series Histogram
+
