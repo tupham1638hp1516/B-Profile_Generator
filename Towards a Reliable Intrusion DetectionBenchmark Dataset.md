@@ -196,12 +196,17 @@ Kết quả đầu ra:
 Sau khi có trong tay hàng ngàn mảng dữ liệu (48-cột) đại diện cho từng ngày, ta cần so sánh chúng với nhau. Vì bản chất dữ liệu là chuỗi thời gian của con người, sự lệch pha (đi làm muộn 30 phút, lướt web trễ 1 tiếng) là không thể tránh khỏi. Euclidean thông thường sẽ thất bại vì nó so sánh cứng nhắc từng cột. DTW sẽ giải quyết việc này bằng cách "uốn cong" thời gian.
 
 **Bước 6.1: Khởi tạo Ma trận Chi phí Cơ sở (Cost Matrix)**
+
 - Giả sử hệ thống đang so sánh 2 mảng: Chuỗi S1 (Anh A - Web - Ngày 1) và Chuỗi S2 (Anh A - Web - Ngày 2).
+
 - Hệ thống tạo ra một ma trận rỗng kích thước 48x48.
+
 - Vòng lặp sẽ duyệt qua mọi tổ hợp điểm để tính khoảng cách hình học cơ sở (ví dụ: trị tuyệt đối `|S1[i] - S2[j]|`).
 
 *Ví dụ minh họa (Trích xuất 5 cột từ 08:00 đến 10:00):*
+
 S1 (Ngày 1): `[10, 50, 20, 0, 5]` (Đỉnh lướt web lúc 08:30 là 50 requests)
+
 S2 (Ngày 2): `[0, 15, 45, 20, 0]` (Đỉnh lướt web trễ sang 09:00 là 45 requests)
 
 ![Cost Matrix Table](Images/table_6_1.svg)
@@ -209,19 +214,26 @@ S2 (Ngày 2): `[0, 15, 45, 20, 0]` (Đỉnh lướt web trễ sang 09:00 là 45 
 *(Bảng trên là ma trận chi phí Cost Matrix cho 5 cột này)*
 
 *Biểu đồ đường trực quan thể hiện sự lệch pha:*
+
 ![Graph S1 S2](Images/graph_6_1.svg)
 
 **Bước 6.2: Tìm Đường đi Uốn cong (Warping Path) bằng Quy hoạch động**
+
 - Thay vì chỉ nhìn vào đường chéo chính (giống Euclidean), hệ thống phải tìm một con đường đi từ góc dưới cùng bên trái `(0, 0)` lên góc trên cùng bên phải `(47, 47)` sao cho tổng chi phí đi qua các ô là nhỏ nhất.
+
 - **Quy tắc di chuyển:** Tại bất kỳ ô `(i, j)` nào, hệ thống chỉ được phép tiến lên theo 3 hướng: Sang phải, Đi lên, Đi chéo.
+
 - Nhìn vào bảng trên, thuật toán sẽ chọn đi qua ô có giá trị **5** `(Cột 2 của S1 khớp với Cột 3 của S2)` thay vì khớp cứng nhắc Cột 2 với Cột 2 (chi phí 35). Nhờ vậy, hai đỉnh sóng bị lệch pha đã được khớp thành công.
 
 *Biểu đồ đường hiển thị sự khớp nối DTW:*
+
 ![Graph DTW Alignment](Images/graph_6_2.svg)
 
 **Bước 6.3: Áp dụng Ràng buộc Cửa sổ Thời gian (Window Constraint - Tùy chọn)**
 - Nếu để DTW tự do uốn cong, nó có thể lấy hành vi lúc 8:00 sáng khớp với hành vi lúc 22:00 đêm (điều này sai thực tế).
+
 - Hệ thống áp dụng dải Sakoe-Chiba (hoặc cửa sổ ràng buộc). Ví dụ: Set window = 2 (tương đương lệch tối đa 1 tiếng).
+
 - Khi đó, thuật toán sẽ cấm các đường đi chệch khỏi đường chéo chính quá 2 ô bằng cách gán chi phí Vô cực (`∞`).
 
 *Ví dụ ma trận sau khi áp dụng ràng buộc (Window = 2):*
@@ -229,10 +241,13 @@ S2 (Ngày 2): `[0, 15, 45, 20, 0]` (Đỉnh lướt web trễ sang 09:00 là 45 
 ![Sakoe-Chiba Table](Images/table_6_3.svg)
 
 *Biểu đồ hiển thị vùng cho phép và vùng cấm (Sakoe-Chiba):*
+
 ![Graph Sakoe-Chiba](Images/graph_6_3.svg)
 
 **Bước 6.4: Trích xuất Khoảng cách DTW Cuối cùng**
+
 - Điểm đích `(47, 47)` của ma trận quy hoạch động sẽ chứa tổng chi phí nhỏ nhất. Đây chính là **Khoảng cách DTW**.
+
 - Hệ thống thực hiện tính toán chéo cho *tất cả* các mảng 48-cột, thu được một **Siêu ma trận khoảng cách NxN**.
 
 *Ví dụ Siêu ma trận khoảng cách DTW của Anh A - Web trong 4 ngày:*
@@ -242,6 +257,7 @@ S2 (Ngày 2): `[0, 15, 45, 20, 0]` (Đỉnh lướt web trễ sang 09:00 là 45 
 *(Dễ nhận thấy Ngày 4 có khoảng cách DTW cực kỳ lớn so với 3 ngày đầu do là ngày nghỉ cuối tuần)*
 
 *Biểu đồ phân tán Không gian khoảng cách dựa trên ma trận trên:*
+
 ![Graph Distance Matrix](Images/graph_6_4.svg)
 
 ---
@@ -251,32 +267,44 @@ S2 (Ngày 2): `[0, 15, 45, 20, 0]` (Đỉnh lướt web trễ sang 09:00 là 45 
 Thay vì dùng K-Means (yêu cầu nạp trước số lượng nhóm K), hệ thống sử dụng X-Means để tự động dò tìm cấu trúc hành vi, kết hợp với Siêu ma trận khoảng cách DTW vừa tạo.
 
 **Bước 7.1: Khởi chạy K-Means Cơ sở**
+
 - Thuật toán X-Means giả định toàn bộ hệ thống chỉ có 2 nhóm hành vi (K=2) và thử phân nhóm.
 
 *Ví dụ kết quả chạy thử lần 1:*
+
 - **Cụm 1 (Ngày làm việc):** Ngày 1, Ngày 2, Ngày 3, Ngày 5
+
 - **Cụm 2 (Cuối tuần):** Ngày 4, Ngày 6
 
 ![Graph K-Means](Images/graph_7_1.svg)
 
 **Bước 7.2: Thử nghiệm Phân tách (Improve-Structure)**
+
 - Hệ thống đặt giả thuyết: *"Nếu tôi chẻ đôi Cụm 1 ra thành 2 cụm con, liệu mô hình có tốt hơn không?"*
 - Nó chạy thử K-means chia Cụm 1 thành:
+
   - **Cụm 1a (Làm việc sáng):** Ngày 1, Ngày 2
+
   - **Cụm 1b (Làm việc chiều):** Ngày 3, Ngày 5
 
 ![Graph X-Means Split](Images/graph_7_2.svg)
 
 **Bước 7.3: Đánh giá bằng Tiêu chuẩn BIC (Bayesian Information Criterion)**
+
 - Hàm BIC chấm điểm dựa trên: **Độ hội tụ (Điểm thưởng)** trừ đi **Số lượng tham số (Điểm phạt)**.
 
 *Ví dụ tính toán BIC:*
+
 - Điểm BIC(Cụm 1 gốc) = **1500** (Dữ liệu hơi rời rạc nhưng ít bị phạt vì chỉ có 1 tâm điểm).
+
 - Điểm BIC(Cụm 1a + Cụm 1b) = **1850** (Dữ liệu hội tụ rất khít, điểm thưởng lấn át hoàn toàn điểm phạt do đẻ thêm 1 tâm điểm).
+
 - **Quyết định:** Vì 1850 > 1500, X-Means chốt việc phân tách. Cụm 1 chính thức bị chẻ thành 1a và 1b.
 
 **Bước 7.4: Đệ quy và Hội tụ**
+
 - X-Means tiếp tục thử chẻ đôi Cụm 1a, 1b và Cụm 2. Nếu điểm BIC giảm (ví dụ từ 1850 xuống 1200 do điểm phạt quá nặng), nó sẽ dừng lại.
+
 - **Kết quả:** Ta có được danh sách các Cụm Hành vi chuẩn xác nhất mà không cần đoán mò.
 
 ---
@@ -286,13 +314,19 @@ Thay vì dùng K-Means (yêu cầu nạp trước số lượng nhóm K), hệ t
 Bước cuối cùng là tính toán ra "Bản thiết kế" đại diện (Tâm điểm - Centroid) cho mỗi cụm. Nếu lấy trung bình cộng bình thường, các đỉnh năng lượng (spikes) sẽ bị làm phẳng.
 
 **Bước 8.1: Khởi tạo Tâm điểm Giả định**
+
 - Trong Cụm 1a, hệ thống bốc ngẫu nhiên 1 mảng (VD: Ngày 1) để làm Tâm điểm tạm thời (`C_tmp`).
+
 - `C_tmp` ban đầu = `[10, 50, 20, 0, 5]` (Đỉnh 50 nằm ở Cột 2)
 
 **Bước 8.2 & 8.3: Ánh xạ DTW và Cập nhật Trọng tâm (Barycenter Update)**
+
 - Thay vì cộng thẳng cột 2 của Ngày 1 với cột 2 của Ngày 2, hệ thống dùng Warping Path để tìm xem đỉnh của Ngày 2 đang nằm ở đâu.
+
 - *Ví dụ:* Đỉnh lướt web của Ngày 2 là **45**, nhưng nó bị trễ sang Cột 3.
+
 - DTW ánh xạ (khớp) **Cột 3 của Ngày 2** vào **Cột 2 của `C_tmp`**.
+
 - Giá trị mới tại Cột 2 của `C_tmp` = `(50 + 45) / 2 = 47.5`.
 
 *Bảng so sánh sức mạnh của DBA so với Trung bình cộng:*
