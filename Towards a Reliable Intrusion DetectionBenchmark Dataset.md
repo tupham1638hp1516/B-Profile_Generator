@@ -264,11 +264,23 @@ S2 (Ngày 2): `[0, 15, 45, 20, 0]` (Đỉnh lướt web trễ sang 09:00 là 45 
 
 ### Bước 7: Phân cụm Tự động bằng Thuật toán X-Means và Tiêu chuẩn BIC
 
-Thay vì dùng K-Means (yêu cầu nạp trước số lượng nhóm K), hệ thống sử dụng X-Means để tự động dò tìm cấu trúc hành vi, kết hợp với Siêu ma trận khoảng cách DTW vừa tạo.
+Thay vì dùng K-Means thông thường yêu cầu người lập trình phải tự đoán và nạp trước số lượng nhóm K, hệ thống sử dụng thuật toán X-Means. X-Means sẽ bắt đầu từ một số lượng nhóm rất nhỏ (thường là K=2), sau đó tự động chẻ đôi các nhóm và dùng hàm toán học (Tiêu chuẩn BIC) để quyết định xem việc chẻ đôi đó có làm mô hình tốt lên không.
 
-**Bước 7.1: Khởi chạy K-Means Cơ sở**
+Công việc lập trình thực tế cho giai đoạn này bao gồm các bước nhỏ sau:
 
-- Thuật toán X-Means giả định toàn bộ hệ thống chỉ có 2 nhóm hành vi (K=2) và thử phân nhóm.
+**Bước 7.1: Nạp Dữ liệu và Thiết lập Tham số Khởi tạo**
+
+- **Hành động 1:** Hệ thống nạp **Siêu ma trận khoảng cách NxN** (đã thu được từ Bước 6). Trong ma trận này, khoảng cách giữa các mảng 48-cột đã được tính sẵn bằng DTW, do đó thuật toán X-Means ở đây (thực chất sẽ chạy trên nền K-Medoids) không cần tính lại khoảng cách Euclidean nữa mà chỉ việc tra cứu độ lệch pha từ ma trận này.
+
+- **Hành động 2:** Thiết lập tham số ranh giới cho thuật toán: `K_min = 2` (số nhóm tối thiểu ban đầu) và `K_max` (giới hạn số nhóm tối đa để chống phân mảnh quá mức, ví dụ `K_max = 10` hoặc `15`).
+
+**Bước 7.2: Chạy Thuật toán Gom cụm Cơ sở (Cấp độ 1)**
+
+- Khởi tạo ngẫu nhiên 2 mảng dữ liệu (2 ngày bất kỳ) làm 2 "Tâm điểm" (Medoids) ban đầu.
+
+- Quét qua toàn bộ các ngày còn lại, tra cứu trong Siêu ma trận xem ngày nào gần Tâm điểm 1 hơn thì phân vào **Cụm 1**, gần Tâm điểm 2 hơn thì phân vào **Cụm 2**.
+
+- Hệ thống chạy vòng lặp cập nhật lại Tâm điểm mới cho mỗi cụm (chọn ngày nằm ở vị trí trung tâm nhất của cụm đó) và phân bổ lại các ngày. Vòng lặp dừng khi các cụm ổn định, không có sự hoán đổi thành viên.
 
 *Ví dụ kết quả chạy thử lần 1:*
 
@@ -278,10 +290,13 @@ Thay vì dùng K-Means (yêu cầu nạp trước số lượng nhóm K), hệ t
 
 ![Graph K-Means](Images/graph_7_1.svg)
 
-**Bước 7.2: Thử nghiệm Phân tách (Improve-Structure)**
+**Bước 7.3: Thử nghiệm Phân tách (Thuật toán Improve-Structure)**
 
-- Hệ thống đặt giả thuyết: *"Nếu tôi chẻ đôi Cụm 1 ra thành 2 cụm con, liệu mô hình có tốt hơn không?"*
-- Nó chạy thử K-means chia Cụm 1 thành:
+- Hệ thống bốc **Cụm 1** ra và đặt giả thuyết: *"Nếu chẻ đôi Cụm 1 ra thành 2 cụm con, liệu việc phân nhóm có chuẩn xác hơn không?"*
+
+- Nó cô lập dữ liệu của Cụm 1, tạm coi đó là một tập dữ liệu độc lập và chạy lại thuật toán gom cụm nội bộ (Local K-Means/K-Medoids) với K=2 chỉ áp dụng riêng cho các thành viên bên trong Cụm 1.
+
+- Kết quả giả định, chia Cụm 1 thành:
 
   - **Cụm 1a (Làm việc sáng):** Ngày 1, Ngày 2
 
@@ -289,56 +304,83 @@ Thay vì dùng K-Means (yêu cầu nạp trước số lượng nhóm K), hệ t
 
 ![Graph X-Means Split](Images/graph_7_2.svg)
 
-**Bước 7.3: Đánh giá bằng Tiêu chuẩn BIC (Bayesian Information Criterion)**
+**Bước 7.4: Tính toán và So sánh bằng Tiêu chuẩn BIC (Bayesian Information Criterion)**
 
-- Hàm BIC chấm điểm dựa trên: **Độ hội tụ (Điểm thưởng)** trừ đi **Số lượng tham số (Điểm phạt)**.
+- Không dựa vào cảm tính để chia cụm, hệ thống cần một con số toán học để đo lường. Hàm BIC chấm điểm dựa trên công thức cốt lõi: **Độ hội tụ của dữ liệu (Likelihood - Điểm thưởng)** trừ đi **Độ phức tạp của mô hình (Penalty - Điểm phạt do gia tăng số lượng tham số/tâm điểm)**.
 
-*Ví dụ tính toán BIC:*
+- Hệ thống chạy hàm tính toán:
 
-- Điểm BIC(Cụm 1 gốc) = **1500** (Dữ liệu hơi rời rạc nhưng ít bị phạt vì chỉ có 1 tâm điểm).
+  1. **Tính Điểm BIC(Cụm 1 gốc):** Ví dụ được **1500 điểm** (Dữ liệu bị phân tán rộng nên điểm thưởng thấp, nhưng ít bị phạt vì chỉ mang 1 Tâm điểm).
 
-- Điểm BIC(Cụm 1a + Cụm 1b) = **1850** (Dữ liệu hội tụ rất khít, điểm thưởng lấn át hoàn toàn điểm phạt do đẻ thêm 1 tâm điểm).
+  2. **Tính Điểm BIC(Cụm 1a + Cụm 1b):** Ví dụ được **1850 điểm** (Các ngày co cụm rất chặt quanh 2 Tâm điểm mới, điểm thưởng hội tụ tăng vọt, lấn át hoàn toàn điểm phạt của việc đẻ thêm 1 Tâm điểm).
 
-- **Quyết định:** Vì 1850 > 1500, X-Means chốt việc phân tách. Cụm 1 chính thức bị chẻ thành 1a và 1b.
+- **So sánh và Quyết định:** Hệ thống chạy lệnh `IF BIC(Chia đôi) > BIC(Giữ nguyên)`. Vì `1850 > 1500`, hệ thống quyết định xác nhận phương án chẻ đôi. Cụm 1 chính thức bị xóa sổ, nhường chỗ cho Cụm 1a và Cụm 1b.
 
-**Bước 7.4: Đệ quy và Hội tụ**
+**Bước 7.5: Vòng lặp Đệ quy (Recursion) và Điều kiện Hội tụ**
 
-- X-Means tiếp tục thử chẻ đôi Cụm 1a, 1b và Cụm 2. Nếu điểm BIC giảm (ví dụ từ 1850 xuống 1200 do điểm phạt quá nặng), nó sẽ dừng lại.
+- Hệ thống đẩy các cụm mới (Cụm 1a, Cụm 1b) và cụm cũ chưa xét (Cụm 2) vào một hàng đợi (Queue).
 
-- **Kết quả:** Ta có được danh sách các Cụm Hành vi chuẩn xác nhất mà không cần đoán mò.
+- Vòng lặp bốc lần lượt từng cụm ra và quay lại **Bước 7.3** để tiếp tục thử chẻ đôi.
 
+- **Điều kiện dừng (Hội tụ):**
+
+  - Quá trình chẻ cụm sẽ lập tức bị hủy bỏ nếu `BIC(Chia đôi) < BIC(Giữ nguyên)`. Tình huống này xảy ra khi hệ thống cố tình chẻ nhỏ một nhóm vốn đã rất đồng nhất; điểm thưởng hội tụ không tăng lên bao nhiêu trong khi điểm phạt tăng mạnh, khiến tổng điểm BIC bị kéo tụt (ví dụ giảm từ 1850 xuống 1200).
+
+  - Vòng lặp cũng sẽ ép dừng nếu tổng số lượng cụm hiện tại chạm đến trần `K_max`.
+- **Kết quả đầu ra của Bước 7:** Hệ thống trả về một danh sách (List) phân chia chính xác từng ngày vào từng cụm hành vi tối ưu nhất (ví dụ: 4 cụm), hoàn toàn tự động mà không cần đoán trước số lượng cụm K.
 ---
 
 ### Bước 8: Tinh chỉnh và Chốt Nguyên mẫu B-Profile bằng DBA (DTW Barycenter Averaging)
 
-Bước cuối cùng là tính toán ra "Bản thiết kế" đại diện (Tâm điểm - Centroid) cho mỗi cụm. Nếu lấy trung bình cộng bình thường, các đỉnh năng lượng (spikes) sẽ bị làm phẳng.
+Sau khi Bước 7 đã phân chia thành công các chuỗi hành vi vào từng cụm riêng biệt (ví dụ: Cụm 1a gồm Ngày 1, Ngày 2, Ngày 5), bước cuối cùng là phải tính ra một "Bản thiết kế" duy nhất đại diện cho cả cụm đó. Bản thiết kế này gọi là **B-Profile**.
 
-**Bước 8.1: Khởi tạo Tâm điểm Giả định**
+Nếu ta sử dụng thuật toán Trung bình cộng (Average) thông thường, các đỉnh (spikes) dữ liệu bị lệch pha giữa các ngày sẽ bị triệt tiêu lẫn nhau và làm phẳng hoàn toàn biểu đồ. Do đó, hệ thống bắt buộc phải dùng thuật toán **DBA (DTW Barycenter Averaging)**.
 
-- Trong Cụm 1a, hệ thống bốc ngẫu nhiên 1 mảng (VD: Ngày 1) để làm Tâm điểm tạm thời (`C_tmp`).
+Dưới đây là chi tiết các bước lập trình để chạy thuật toán DBA:
 
-- `C_tmp` ban đầu = `[10, 50, 20, 0, 5]` (Đỉnh 50 nằm ở Cột 2)
+**Bước 8.1: Cô lập Dữ liệu và Khởi tạo Tâm điểm Giả định (Initial Sequence)**
 
-**Bước 8.2 & 8.3: Ánh xạ DTW và Cập nhật Trọng tâm (Barycenter Update)**
+- **Hành động 1:** Hệ thống bốc riêng dữ liệu của một cụm (ví dụ Cụm 1a) để xử lý. Các cụm khác sẽ được xử lý độc lập ở các luồng khác nhau.
 
-- Thay vì cộng thẳng cột 2 của Ngày 1 với cột 2 của Ngày 2, hệ thống dùng Warping Path để tìm xem đỉnh của Ngày 2 đang nằm ở đâu.
+- **Hành động 2:** Thay vì lấy trung bình ngay lập tức, hệ thống lập trình sẽ bốc ngẫu nhiên (hoặc chọn chuỗi có tổng khoảng cách DTW tới các chuỗi khác là nhỏ nhất) một mảng 48-cột bất kỳ trong Cụm 1a làm Tâm điểm tạm thời, gọi là mảng `C_tmp`.
 
-- *Ví dụ:* Đỉnh lướt web của Ngày 2 là **45**, nhưng nó bị trễ sang Cột 3.
+- *Ví dụ:* Chọn Ngày 1 làm `C_tmp` ban đầu. `C_tmp = [10, 50, 20, 0, 5]` (có một đỉnh dữ liệu lướt web là 50 requests nằm ở Index số 1).
 
-- DTW ánh xạ (khớp) **Cột 3 của Ngày 2** vào **Cột 2 của `C_tmp`**.
+**Bước 8.2: Ánh xạ bằng DTW (DTW Warping Path Assignment)**
 
-- Giá trị mới tại Cột 2 của `C_tmp` = `(50 + 45) / 2 = 47.5`.
+- Ở bước này, hệ thống không cộng thẳng các cột cùng Index với nhau. Nó duyệt qua từng ngày còn lại trong Cụm 1a (ví dụ Ngày 2, Ngày 5) và chạy thuật toán DTW giữa ngày đó với mảng `C_tmp`.
 
-*Bảng so sánh sức mạnh của DBA so với Trung bình cộng:*
+- **Hành động:** Thuật toán DTW sẽ tìm ra **Đường đi Uốn cong (Warping Path)**. Đường đi này là một danh sách tọa độ chỉ ra chính xác cột nào của Ngày 2 đang "khớp" (tương đồng về mặt hình thái) với cột nào của `C_tmp`.
+
+- *Ví dụ:* Đỉnh lướt web của Ngày 2 có giá trị là **45**, nhưng hôm đó người dùng lướt web trễ hơn nên nó nằm ở Index số 2. Nhờ Warping Path, code phát hiện ra rằng **Cột Index 2 của Ngày 2** thực chất là hệ quả của cùng một hành vi tương ứng với **Cột Index 1 của `C_tmp`**.
+
+**Bước 8.3: Cập nhật Trọng tâm (Barycenter Update)**
+
+- Sau khi có danh sách ánh xạ, hệ thống tiến hành cập nhật lại giá trị cho từng cột của mảng `C_tmp`.
+
+- **Hành động:** Đối với mỗi Cột thứ `i` của `C_tmp`, hệ thống sẽ gom tất cả các giá trị từ các ngày khác mà đã được thuật toán DTW "chỉ định" là khớp với Cột `i`. Sau đó, nó tính trung bình cộng của tập hợp các giá trị vừa gom được đó.
+
+- *Ví dụ:*
+  - Cột Index 1 của `C_tmp` đang mang giá trị 50 (Ngày 1).
+
+  - Qua phép ánh xạ, nó được gom chung với Cột Index 2 của Ngày 2 (đang mang giá trị 45).
+
+  - Giá trị mới tại Cột Index 1 của `C_tmp` được cập nhật thành: `(50 + 45) / 2 = 47.5`.
+
+*Bảng minh họa sức mạnh của DBA so với tính Trung bình cộng thông thường:*
 
 ![DBA Comparison Table](Images/table_8_3.svg)
 
-*Biểu đồ hiển thị sự khác biệt: TBC làm phẳng đỉnh, DBA giữ nguyên đỉnh nhọn:*
+*Biểu đồ hiển thị sự khác biệt: Tính Trung bình làm phẳng đỉnh, trong khi DBA giữ nguyên được đỉnh nhọn thực tế:*
 
 ![Graph DBA Comparison](Images/graph_8_3.svg)
 
-*(Chú ý: Trung bình cộng thông thường làm phẳng đỉnh 50 và 45 xuống chỉ còn 32.5. Trong khi đó, DBA gom thành công hai đỉnh bị lệch pha lại thành một đỉnh nhọn **47.5**).*
+*(Chú ý trực quan: Phép tính trung bình cộng thông thường ép cứng Cột 1 cộng với Cột 1, Cột 2 cộng với Cột 2, khiến hai đỉnh 50 và 45 bị chia đôi cho 0, tự triệt tiêu lẫn nhau và xẹp xuống chỉ còn 32.5. Trong khi đó, hệ thống lập trình DBA gom thành công hai đỉnh bị lệch pha lại thành một đỉnh nhọn **47.5** ở chính giữa, phản ánh chính xác bản chất cường độ hành vi của người dùng).*
 
-**Bước 8.4: Chu trình Lặp đến khi Ổn định**
-- Hệ thống lặp lại bước cộng dồn trọng tâm này khoảng 15 đến 30 vòng cho đến khi mảng `C_tmp` không đổi nữa.
-- **KẾT QUẢ CUỐI CÙNG:** Mảng `C_tmp` cuối cùng này chính là **B-Profile**.
+**Bước 8.4: Chu trình Lặp đến khi Hội tụ (Iteration to Convergence)**
+
+- **Vòng lặp:** Mảng `C_tmp` sau khi được cập nhật (chứa đỉnh 47.5) sẽ tiếp tục được nạp làm Tâm điểm mới cho vòng lặp tiếp theo. Hệ thống lại mang `C_tmp` mới này đi chạy DTW với Ngày 1, Ngày 2, Ngày 5 và lặp lại quá trình ánh xạ, cập nhật trọng tâm.
+
+- **Điều kiện dừng:** Hệ thống lặp lại vòng lặp 8.2 và 8.3 này (thường mất từ 10 đến 30 vòng lặp) liên tục cho đến khi các giá trị bên trong mảng `C_tmp` **không còn sự thay đổi nữa** (hoặc mức độ chênh lệch giữa 2 vòng lặp liên tiếp rất bé, tiệm cận 0).
+
+- **KẾT QUẢ CUỐI CÙNG:** Ngay khi vòng lặp kết thúc, mảng `C_tmp` hội tụ cuối cùng đó chính thức được xuất ra và dán nhãn là **B-Profile** của Cụm 1a. Hệ thống sau đó lặp lại tự động toàn bộ quy trình này cho Cụm 1b, Cụm 2,... để hoàn tất việc lập Hồ sơ Hành vi cho toàn bộ tập dữ liệu.
