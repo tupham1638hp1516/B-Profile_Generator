@@ -189,3 +189,5 @@ Kết quả đầu ra:
 
 ### Đến đây là kết thúc phân đoạn Time-Series Histogram
 
+### Bước tiếp theo chính là Gom cụm và Trích xuất Nguyên mẫu (Clustering & Profiling). Mục tiêu của bước này là so sánh hàng ngàn bảng ma trận đó với nhau, xem những ngày nào có thói quen giống nhau thì gom chung vào một nhóm, từ đó rút ra một "Hồ sơ hành vi gốc" (B-Profile).
+
