@@ -8,7 +8,7 @@
 
 ---
 
-### 🗺️ Tổng quan Pipeline: Từ Dữ liệu Thô đến B-Profile
+### Tổng quan Pipeline: Từ Dữ liệu Thô đến B-Profile
 
 Trước khi đi vào từng bước chi tiết, hãy nhìn toàn cảnh luồng xử lý:
 
@@ -192,9 +192,9 @@ Bảng gốc (Chưa được sắp xếp):
 
 >  Sau khi có cột `bin_index`, gọi thêm `.groupby([..., 'bin_index']).agg(...)`. Trong hàm `agg`, truyền vào một dict chỉ định: cột nào thì `'count'` (đếm số luồng), cột nào thì `'sum'` (cộng dồn byte), cột nào thì `'mean'` (lấy trung bình duration). Kết quả là một DataFrame nhỏ gọn với tối đa 48 hàng.
 
-### 📌 Tóm tắt: Luồng Code Tổng hợp Bước 3 + 4 theo Data Pipeline
+### Tóm tắt: Luồng Code Tổng hợp Bước 3 + 4 theo Data Pipeline
 
-> *(Phần này không phải bước mới — đây là bản tóm tắt lại Bước 3 và 4 dưới dạng pipeline liên tục, giúp hình dung cách viết code thực tế gọn hơn so với mô tả từng bước riêng lẻ ở trên.)*
+> *(Phần này không phải bước mới — ta tóm tắt lại Bước 3 và 4 dưới dạng pipeline liên tục, giúp hình dung cách hệ thống hoạt động gọn hơn so với mô tả từng bước riêng lẻ ở trên.)*
 
 > Thay vì chạy qua dữ liệu nhiều vòng, hệ thống chỉ cần làm một thao tác duy nhất: Gom nhóm theo Ngày -> Đánh Index -> Ép nén.
 
